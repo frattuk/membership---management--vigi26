@@ -12,6 +12,7 @@ const DB = "membership_management";
 
 // const usersCollection = "users";
 const membershipsCollection = "memberships";
+const userManagementCollection = "user_management";
 
 app.get("/memberships", async (req, res) => {
   try {
@@ -53,6 +54,38 @@ app.delete("/memberships/:id", async (req, res) => {
       .db(DB)
       .collection(membershipsCollection)
       .deleteOne({ _id: ObjectId(req.params.id) });
+
+    await con.close();
+    return res.send(data);
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+});
+
+app.get("/user_management", async (req, res) => {
+  try {
+    const con = await client.connect();
+
+    const data = await con
+      .db(DB)
+      .collection(userManagementCollection)
+      .find()
+      .toArray();
+    await con.close();
+    return res.send(data);
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+});
+
+app.post("/user_management", async (req, res) => {
+  try {
+    const con = await client.connect();
+
+    const data = await con
+      .db(DB)
+      .collection(userManagementCollection)
+      .insertOne(req.body);
 
     await con.close();
     return res.send(data);
